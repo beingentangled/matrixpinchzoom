@@ -81,37 +81,59 @@ class _TransformDemo5State extends State<TransformDemo5> {
               height: double.infinity,
               alignment: Alignment.topLeft,
               color: Colors.black12,
-              child: AnimatedBuilder(
-                builder: (ctx, child) {
-                  return Transform(
-                    transform: matrix,
-                    child: Container(
-                      width: width,
-                      height: height,
-                      decoration: BoxDecoration(
-                        color: Colors.white30,
-                        border: Border.all(
-                          color: Colors.black45,
-                          width: 2,
+              child: Stack(
+                children: [
+                  AnimatedBuilder(
+                    builder: (ctx, child) {
+                      return Transform(
+                        transform: matrix,
+                        child: Container(
+                          width: width,
+                          height: height,
+                          decoration: BoxDecoration(
+                            color: Colors.white30,
+                            border: Border.all(
+                              color: Colors.black45,
+                              width: 2,
+                            ),
+                          ),
+                          child: AspectRatio(
+                            aspectRatio: _controller.value.aspectRatio,
+                            child: Stack(
+                              alignment: Alignment.bottomCenter,
+                              children: <Widget>[
+                                VideoPlayer(_controller),
+                                ClosedCaption(text: _controller.value.caption.text),
+                                // _ControlsOverlay(controller: _controller),
+                                VideoProgressIndicator(_controller,
+                                    allowScrubbing: true),
+                              ],
+                            ),
+                          ),
                         ),
-                      ),
-                      child: AspectRatio(
-                        aspectRatio: _controller.value.aspectRatio,
-                        child: Stack(
-                          alignment: Alignment.bottomCenter,
-                          children: <Widget>[
-                            VideoPlayer(_controller),
-                            ClosedCaption(text: _controller.value.caption.text),
-                            // _ControlsOverlay(controller: _controller),
-                            VideoProgressIndicator(_controller,
-                                allowScrubbing: true),
-                          ],
-                        ),
-                      ),
+                      );
+                    },
+                    animation: notifier,
+                  ),
+                  // make a button
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    child: IconButton(
+                      color: Colors.red,
+                      icon: Icon(Icons.add),
+                      onPressed: () {
+                        debugPrint('add');
+                        // matrix.scale(2.0, 2.0, 0.0);
+                        // matrix = MatrixGestureDetector.compose(matrix, null, null, null);
+                        // boxer.clamp(matrix);
+                        // notifier.value = matrix;
+                        // print('scaledWi
+                        // dth: ${dst.width}');
+                      },
                     ),
-                  );
-                },
-                animation: notifier,
+                  ),
+                ],
               ),
             ),
           );
