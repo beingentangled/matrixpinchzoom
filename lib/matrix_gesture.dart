@@ -127,7 +127,7 @@ class _MatrixGestureDetectorState extends State<MatrixGestureDetector> {
   void onScaleStart(ScaleStartDetails details) {
     translationUpdater.value = details.focalPoint;
     rotationUpdater.value = double.nan;
-    scaleUpdater.value = 1.0;
+    // scaleUpdater.value = 1.0;
   }
 
   void onScaleUpdate(ScaleUpdateDetails details) {
@@ -160,27 +160,59 @@ class _MatrixGestureDetectorState extends State<MatrixGestureDetector> {
       double scaledWidth = dst.width;
       double scaledHeight = dst.height;
 
-      if (scaledHeight < 150) {
-        return;
+      print(details.scale);
+
+      if (scaledHeight >= 300) {
+        if (details.scale < 2.0) {
+          double scaleDelta = scaleUpdater.update(details.scale);
+          scaleDeltaMatrix = _scale(scaleDelta, focalPoint);
+          matrix = scaleDeltaMatrix * matrix;
+          widget.onMatrixUpdate(matrix, translationDeltaMatrix,
+              scaleDeltaMatrix, rotationDeltaMatrix);
+          return;
+        } else {
+          return;
+        }
       }
-      if (scaledWidth < 200) {
-        return;
+
+      if (scaledHeight >= 148 || scaledHeight <= 152) {
+        // details.scale = 1.0;
+        if (details.scale > 1.0) {
+          double scaleDelta = scaleUpdater.update(details.scale);
+          scaleDeltaMatrix = _scale(scaleDelta, focalPoint);
+          matrix = scaleDeltaMatrix * matrix;
+          widget.onMatrixUpdate(matrix, translationDeltaMatrix,
+              scaleDeltaMatrix, rotationDeltaMatrix);
+          return;
+        } else {
+          return;
+        }
       }
-      if (scaledHeight > 300) {
-        return;
-      }
-      if (scaledWidth > 400) {
-        return;
-      }
-      if (scaledHeight <= 300 || scaledHeight >= 150) {
-        double scaleDelta = scaleUpdater.update(details.scale);
-        scaleDeltaMatrix = _scale(scaleDelta, focalPoint);
-        matrix = scaleDeltaMatrix * matrix;
-        return;
-      }
-      double scaleDelta = scaleUpdater.update(details.scale);
-      scaleDeltaMatrix = _scale(scaleDelta, focalPoint);
-      matrix = scaleDeltaMatrix * matrix;
+      // if (scaledWidth < 200) {
+      //   double scaleDelta = scaleUpdater.update(details.scale);
+      //   scaleDeltaMatrix = _scale(scaleDelta, focalPoint);
+      //   matrix = scaleDeltaMatrix * matrix;
+      //   widget.onMatrixUpdate(matrix, translationDeltaMatrix, scaleDeltaMatrix,
+      //       rotationDeltaMatrix);
+      //   return;
+      // }
+      // if (scaledWidth > 400) {
+      //   double scaleDelta = scaleUpdater.update(details.scale);
+      //   scaleDeltaMatrix = _scale(scaleDelta, focalPoint);
+      //   matrix = scaleDeltaMatrix * matrix;
+      //   widget.onMatrixUpdate(matrix, translationDeltaMatrix, scaleDeltaMatrix,
+      //       rotationDeltaMatrix);
+      //   return;
+      // }
+      // if (scaledHeight <= 300 || scaledHeight >= 150) {
+      //   double scaleDelta = scaleUpdater.update(details.scale);
+      //   scaleDeltaMatrix = _scale(scaleDelta, focalPoint);
+      //   matrix = scaleDeltaMatrix * matrix;
+      //   return;
+      // }
+      // double scaleDelta = scaleUpdater.update(details.scale);
+      // scaleDeltaMatrix = _scale(scaleDelta, focalPoint);
+      // matrix = scaleDeltaMatrix * matrix;
     }
 
     // handle matrix rotating
